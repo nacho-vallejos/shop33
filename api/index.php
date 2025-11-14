@@ -69,16 +69,16 @@ try {
         exit;
     }
     
-    // AUTH ENDPOINTS
-    if (($path === '/auth/login' || $path === '/auth/login/') && $method === 'POST') {
+    // AUTH ENDPOINTS - Compatible con Node.js
+    if (($path === '/admin/login' || $path === '/admin/login/') && $method === 'POST') {
         AuthController\login(json_input());
     }
     
-    if (($path === '/auth/logout' || $path === '/auth/logout/') && $method === 'POST') {
+    if (($path === '/admin/logout' || $path === '/admin/logout/') && $method === 'POST') {
         AuthController\logout();
     }
     
-    if (($path === '/auth/me' || $path === '/auth/me/') && $method === 'GET') {
+    if (($path === '/admin/me' || $path === '/admin/me/') && $method === 'GET') {
         AuthController\me();
     }
     
@@ -96,6 +96,11 @@ try {
     if (($path === '/admin/product' || $path === '/admin/product/') && $method === 'POST') {
         require_auth_api();
         ProductsController\create($_POST, $_FILES);
+    }
+    
+    if (preg_match('#^/admin/product/([^/]+)/?$#', $path, $m) && $method === 'DELETE') {
+        require_auth_api();
+        ProductsController\delete($m[1]);
     }
     
     if (preg_match('#^/admin/product/([^/]+)/?$#', $path, $m) && $method === 'POST') {

@@ -21,12 +21,13 @@ function users_store() {
 }
 
 function login(array $in) {
-    $u = trim($in['user'] ?? '');
-    $p = (string)($in['pass'] ?? '');
+    // Acepta tanto 'user'/'pass' (legacy) como 'username'/'password' (Node.js compatible)
+    $u = trim($in['username'] ?? $in['user'] ?? '');
+    $p = (string)($in['password'] ?? $in['pass'] ?? '');
     
     if ($u === '' || $p === '') {
         http_response_code(400);
-        echo json_encode(['ok' => false, 'error' => 'missing_fields'], JSON_UNESCAPED_UNICODE);
+        echo json_encode(['error' => 'Username and password required'], JSON_UNESCAPED_UNICODE);
         exit;
     }
     
@@ -34,7 +35,7 @@ function login(array $in) {
     if (!isset($users[$u])) {
         \log_msg('WARN', "Login failed: user not found: $u");
         http_response_code(401);
-        echo json_encode(['ok' => false, 'error' => 'invalid_credentials'], JSON_UNESCAPED_UNICODE);
+        echo json_encode(['error' => 'Invalid credentials'], JSON_UNESCAPED_UNICODE);
         exit;
     }
     
@@ -43,7 +44,7 @@ function login(array $in) {
     if (!password_verify($p, $row['pass'])) {
         \log_msg('WARN', "Login failed: wrong password for: $u");
         http_response_code(401);
-        echo json_encode(['ok' => false, 'error' => 'invalid_credentials'], JSON_UNESCAPED_UNICODE);
+        echo json_encode(['error' => 'Invalid credentials'], JSON_UNESCAPED_UNICODE);
         exit;
     }
     
@@ -56,15 +57,21 @@ function login(array $in) {
     $_SESSION['csrf']    = bin2hex(random_bytes(16));
     $_SESSION['login_time'] = time();
     
+    // Generar un token simple (compatible con Node.js response)
+    $token = base64_encode(json_encode([
+        'user' => $row['user'],
+        'role' => $row['role'],
+        'time' => time(),
+        'session' => session_id()
+    ]));
+    
     \log_msg('INFO', "User logged in: $u");
     
+    // Respuesta compatible con Node.js
     echo json_encode([
-        'ok' => true,
-        'data' => [
-            'user' => $row['user'],
-            'role' => $row['role'],
-            'csrf' => $_SESSION['csrf']
-        ]
+        'token' => $token,
+        'user' => $row['user'],
+        'role' => $row['role']
     ], JSON_UNESCAPED_UNICODE);
     exit;
 }
@@ -84,16 +91,15 @@ function logout() {
 function me() {
     if (empty($_SESSION['user_id'])) {
         http_response_code(401);
-        echo json_encode(['ok' => false, 'error' => 'auth_required'], JSON_UNESCAPED_UNICODE);
+        echo json_encode(['error' => 'auth_required'], JSON_UNESCAPED_UNICODE);
         exit;
     }
     
+    // Respuesta compatible con Node.js
     echo json_encode([
-        'ok' => true,
-        'data' => [
+        'user' => [
             'user' => $_SESSION['user'] ?? null,
-            'role' => $_SESSION['role'] ?? null,
-            'csrf' => $_SESSION['csrf'] ?? null
+            'role' => $_SESSION['role'] ?? null
         ]
     ], JSON_UNESCAPED_UNICODE);
     exit;
