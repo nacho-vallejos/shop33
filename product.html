@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Producto — SHOP33 Skate Store</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dark product-page">
+    <!-- Navbar -->
+    <header class="navbar">
+      <div class="navbar-container">
+        <div class="logo-container">
+          <a href="/">
+            <h1 class="logo">SHOP<span class="logo-accent">33</span></h1>
+            <span class="logo-subtitle">SKATER STORE</span>
+          </a>
+        </div>
+
+        <div class="nav-actions">
+          <a href="./" class="back-btn">← Volver al catálogo</a>
+          <div class="cart-icon" id="cart-icon">
+            🛒
+            <span class="cart-badge" id="cart-count">0</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Producto Individual -->
+    <main class="product-main">
+      <div class="product-container" id="product-container">
+        <!-- Loader -->
+        <div class="loader-container">
+          <div class="skate-loader">
+            <div class="skateboard"></div>
+            <p>CARGANDO PRODUCTO...</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>SHOP<span class="logo-accent">33</span></h3>
+          <p>Tu tienda urbana de confianza</p>
+        </div>
+        <div class="footer-section">
+          <h4>SÍGUENOS</h4>
+          <div class="social-icons">
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">🎵 TikTok</a>
+            <a href="#" class="social-link">▶️ YouTube</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SHOP33. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+    <script>
+      const API_URL = window.location.origin;
+
+      // Obtener ID del producto desde URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get("id");
+
+      if (!productId) {
+        window.location.href = "./";
+      }
+
+      // Actualizar contador del carrito
+      function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        document.getElementById("cart-count").textContent = cart.length;
+      }
+
+      // Agregar al carrito
+      function addToCart(id, name) {
+        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        cart.push({ id, name, addedAt: Date.now() });
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartCount();
+
+        // Notificación visual
+        const notification = document.createElement("div");
+        notification.className = "cart-notification";
+        notification.innerHTML = `✓ ${name} agregado al carrito`;
+        document.body.appendChild(notification);
+
+        setTimeout(() => notification.classList.add("show"), 100);
+        setTimeout(() => {
+          notification.classList.remove("show");
+          setTimeout(() => notification.remove(), 300);
+        }, 3000);
+      }
+
+      // Cambiar imagen principal
+      function changeMainImage(imageSrc) {
+        document.getElementById("main-image").src = imageSrc;
+      }
+
+      // Seleccionar talle
+      function selectSize(element, size) {
+        document
+          .querySelectorAll(".size-option")
+          .forEach((el) => el.classList.remove("selected"));
+        element.classList.add("selected");
+        document.getElementById("selected-size").value = size;
+      }
+
+      // Cargar producto
+      async function loadProduct() {
+        try {
+          const res = await fetch(`${API_URL}/api/products/${productId}`);
+          if (!res.ok) throw new Error("Producto no encontrado");
+
+          const product = await res.json();
+          renderProduct(product);
+        } catch (error) {
+          document.getElementById("product-container").innerHTML = `
+            <div class="error-message">
+              <h2>😔 Producto no encontrado</h2>
+              <p>${error.message}</p>
+              <a href="./" class="btn btn-primary">Volver al catálogo</a>
+            </div>
+          `;
+        }
+      }
+
+      function renderProduct(product) {
+        const images =
+          product.images && product.images.length
+            ? product.images
+            : ["https://via.placeholder.com/600x600?text=Sin+Imagen"];
+
+        const mainImage = images[0];
+        const thumbnails = images
+          .map(
+            (img, idx) =>
+              `<img src="${img}" alt="${product.name} ${
+                idx + 1
+              }" class="thumbnail" onclick="changeMainImage('${img}')" />`
+          )
+          .join("");
+
+        const sizes =
+          product.sizes && product.sizes.length
+            ? product.sizes
+                .map(
+                  (size) =>
+                    `<button class="size-option" onclick="selectSize(this, '${size}')">${size}</button>`
+                )
+                .join("")
+            : '<p class="no-sizes">Sin talles disponibles</p>';
+
+        const stockStatus =
+          product.stock > 0
+            ? `<span class="stock-available">✓ ${product.stock} en stock</span>`
+            : `<span class="stock-unavailable">✗ SIN STOCK</span>`;
+
+        const container = document.getElementById("product-container");
+        container.innerHTML = `
+          <div class="product-detail">
+            <!-- Galería de imágenes -->
+            <div class="product-gallery">
+              <div class="main-image-container">
+                <img id="main-image" src="${mainImage}" alt="${
+          product.name
+        }" class="main-image" />
+                ${
+                  product.stock === 0
+                    ? '<div class="out-of-stock-badge">SIN STOCK</div>'
+                    : ""
+                }
+              </div>
+              <div class="thumbnails-container">
+                ${thumbnails}
+              </div>
+            </div>
+
+            <!-- Información del producto -->
+            <div class="product-info">
+              <div class="product-category">${
+                product.category || "Sin categoría"
+              }</div>
+              <h1 class="product-title">${product.name}</h1>
+              <div class="product-brand">${product.brand || "Sin marca"}</div>
+              
+              <div class="product-price">
+                <span class="currency">$</span>
+                <span class="amount">${product.price.toLocaleString(
+                  "es-AR"
+                )}</span>
+              </div>
+
+              <div class="product-stock">
+                ${stockStatus}
+              </div>
+
+              <div class="product-description">
+                <h3>Descripción</h3>
+                <p>${
+                  product.description || "Producto sin descripción disponible."
+                }</p>
+              </div>
+
+              <!-- Selector de talles -->
+              <div class="size-selector">
+                <h3>Seleccionar talle</h3>
+                <div class="sizes-container">
+                  ${sizes}
+                </div>
+                <input type="hidden" id="selected-size" value="" />
+              </div>
+
+              <!-- Botón agregar al carrito -->
+              <button 
+                class="btn btn-add-cart" 
+                ${product.stock === 0 ? "disabled" : ""}
+                onclick="addToCart('${product.id}', '${product.name.replace(
+          /'/g,
+          "\\'"
+        )}')">
+                ${product.stock > 0 ? "🛒 AGREGAR AL CARRITO" : "✗ SIN STOCK"}
+              </button>
+
+              <!-- Detalles adicionales -->
+              <div class="product-details">
+                <div class="detail-item">
+                  <span class="detail-label">Marca:</span>
+                  <span class="detail-value">${product.brand || "N/A"}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Categoría:</span>
+                  <span class="detail-value">${product.category || "N/A"}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">ID:</span>
+                  <span class="detail-value">${product.id}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Inicializar
+      updateCartCount();
+      loadProduct();
+    </script>
+  </body>
+</html>

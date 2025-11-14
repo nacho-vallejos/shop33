@@ -1,0 +1,183 @@
+[
+  {
+    "id": "3ee046ee-30b7-459c-a415-c1260d393c3a",
+    "name": "Zapatillas",
+    "category": "Zapatillas",
+    "brand": "Adidas",
+    "price": 25000,
+    "stock": 5,
+    "sizes": ["38", "39", "41", "45"],
+    "images": ["/uploads/1762827444810-g0ickd.webp"],
+    "description": "Zapatillas adidas",
+    "createdAt": "2025-11-11T02:17:24.825Z"
+  },
+  {
+    "id": "1",
+    "name": "Vans Old Skool Black/White",
+    "category": "Zapatillas",
+    "brand": "Vans",
+    "price": 8999,
+    "stock": 12,
+    "sizes": ["38", "39", "40", "41", "42", "43", "44", "45"],
+    "images": [
+      "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=800",
+      "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800"
+    ],
+    "description": "Clásicas zapatillas Vans Old Skool — estilo skater icónico, suela vulcanizada de goma waffle para mejor agarre.",
+    "createdAt": "2025-11-06T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "name": "Remera Thrasher Magazine Logo",
+    "category": "Remeras",
+    "brand": "Thrasher",
+    "price": 3999,
+    "stock": 24,
+    "sizes": ["S", "M", "L", "XL"],
+    "images": [
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800"
+    ],
+    "description": "Remera de algodón 100% con el icónico logo de Thrasher Magazine.",
+    "createdAt": "2025-11-06T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "name": "Buzo Supreme Box Logo Hoodie",
+    "category": "Buzos / Camperas",
+    "brand": "Supreme",
+    "price": 16999,
+    "stock": 5,
+    "sizes": ["S", "M", "L", "XL"],
+    "images": [
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800"
+    ],
+    "description": "Buzo con capucha y logo box de Supreme — edición limitada.",
+    "createdAt": "2025-11-06T00:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "name": "Nike SB Dunk Low Pro",
+    "category": "Zapatillas",
+    "brand": "Nike",
+    "price": 12499,
+    "stock": 8,
+    "sizes": ["39", "40", "41", "42", "43", "44"],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800"
+    ],
+    "description": "Nike SB Dunk Low Pro diseñadas específicamente para skateboarding.",
+    "createdAt": "2025-11-05T00:00:00.000Z"
+  },
+  {
+    "id": "5",
+    "name": "Pantalón Dickies 874 Original",
+    "category": "Pantalones",
+    "brand": "Dickies",
+    "price": 7499,
+    "stock": 15,
+    "sizes": ["28", "30", "32", "34", "36", "38"],
+    "images": [
+      "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800"
+    ],
+    "description": "Pantalón de trabajo clásico Dickies 874, adoptado por la cultura skater.",
+    "createdAt": "2025-11-05T00:00:00.000Z"
+  },
+  {
+    "id": "6",
+    "name": "Remera Volcom Stone Stack",
+    "category": "Remeras",
+    "brand": "Volcom",
+    "price": 3499,
+    "stock": 18,
+    "sizes": ["S", "M", "L", "XL", "XXL"],
+    "images": [
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800"
+    ],
+    "description": "Remera Volcom con gráfica Stone Stack. Algodón suave.",
+    "createdAt": "2025-11-04T00:00:00.000Z"
+  },
+  {
+    "id": "7",
+    "name": "Mochila Herschel Little America",
+    "category": "Mochilas / Accesorios",
+    "brand": "Herschel",
+    "price": 9999,
+    "stock": 10,
+    "sizes": ["Única"],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800"
+    ],
+    "description": "Mochila estilo montañero con diseño urbano. 25L de capacidad.",
+    "createdAt": "2025-11-04T00:00:00.000Z"
+  },
+  {
+    "id": "8",
+    "name": "Gorra New Era 9FIFTY Snapback",
+    "category": "Mochilas / Accesorios",
+    "brand": "New Era",
+    "price": 4299,
+    "stock": 20,
+    "sizes": ["Única"],
+    "images": [
+      "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800"
+    ],
+    "description": "Gorra snapback con visera plana. Ajuste trasero regulable.",
+    "createdAt": "2025-11-03T00:00:00.000Z"
+  },
+  {
+    "id": "9",
+    "name": "Campera Carhartt WIP Detroit Jacket",
+    "category": "Buzos / Camperas",
+    "brand": "Carhartt",
+    "price": 18999,
+    "stock": 6,
+    "sizes": ["S", "M", "L", "XL"],
+    "images": [
+      "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800"
+    ],
+    "description": "Chaqueta Detroit de Carhartt WIP. Lona resistente.",
+    "createdAt": "2025-11-03T00:00:00.000Z"
+  },
+  {
+    "id": "10",
+    "name": "Adidas Skateboarding Busenitz",
+    "category": "Zapatillas",
+    "brand": "Adidas",
+    "price": 10999,
+    "stock": 14,
+    "sizes": ["39", "40", "41", "42", "43", "44", "45"],
+    "images": [
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=800"
+    ],
+    "description": "Zapatillas signature de Dennis Busenitz.",
+    "createdAt": "2025-11-02T00:00:00.000Z"
+  },
+  {
+    "id": "11",
+    "name": "Remera Polar Skate Co. Big Boy",
+    "category": "Remeras",
+    "brand": "Polar",
+    "price": 4599,
+    "stock": 0,
+    "sizes": ["S", "M", "L", "XL"],
+    "images": [
+      "https://images.unsplash.com/photo-1622445275463-afa2ab738c34?w=800"
+    ],
+    "description": "Remera oversized de Polar Skate Co. Sin stock.",
+    "createdAt": "2025-11-02T00:00:00.000Z"
+  },
+  {
+    "id": "12",
+    "name": "Pantalón Carhartt Single Knee",
+    "category": "Pantalones",
+    "brand": "Carhartt",
+    "price": 8999,
+    "stock": 11,
+    "sizes": ["30", "32", "34", "36", "38"],
+    "images": [
+      "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800"
+    ],
+    "description": "Pantalón Carhartt con refuerzo en rodilla.",
+    "createdAt": "2025-11-01T00:00:00.000Z"
+  }
+]

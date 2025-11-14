@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SHOP33 — Skate Multimarca | Urban Streetwear</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dark">
+    <!-- Video de fondo -->
+    <video autoplay muted loop id="bg-video">
+      <source src="./assets/videos/skater.mp4" type="video/mp4" />
+      Tu navegador no soporta video HTML5.
+    </video>
+
+    <!-- Loader animado -->
+    <div id="page-loader" class="page-loader">
+      <div class="skate-loader">
+        <div class="skateboard"></div>
+        <p>CARGANDO...</p>
+      </div>
+    </div>
+
+    <!-- Carousel superior -->
+    <section class="section-adbar section-adbar-animated">
+      <div class="adbar-animated" id="adbar-animated">
+        <span class="adbar-message"
+          >COMPRAS MAYORISTAS HABLAR POR WHATSAPP</span
+        >
+        <span class="adbar-message"
+          >COMPRAS MAYORES A $70.000 ENVIO GRATIS A TODO EL PAIS</span
+        >
+        <span class="adbar-message"
+          >COMPRAS MAYORISTAS HABLAR POR WHATSAPP</span
+        >
+        <span class="adbar-message"
+          >COMPRAS MAYORES A $70.000 ENVIO GRATIS A TODO EL PAIS</span
+        >
+        <span class="adbar-message"
+          >COMPRAS MAYORISTAS HABLAR POR WHATSAPP</span
+        >
+        <span class="adbar-message"
+          >COMPRAS MAYORES A $70.000 ENVIO GRATIS A TODO EL PAIS</span
+        >
+        <span class="adbar-message"
+          >COMPRAS MAYORISTAS HABLAR POR WHATSAPP</span
+        >
+        <span class="adbar-message"
+          >COMPRAS MAYORES A $70.000 ENVIO GRATIS A TODO EL PAIS</span
+        >
+      </div>
+    </section>
+
+    <!-- Navbar fija -->
+    <header class="navbar">
+      <div class="navbar-container">
+        <div class="logo-container">
+          <img
+            src="./assets/images/logoLuikeBlanco.png"
+            alt="Logo"
+            class="logo-image"
+          />
+          <span class="logo-subtitle">SKATER STORE</span>
+        </div>
+
+        <nav class="nav-menu" id="nav-menu">
+          <a href="#" data-filter="" class="nav-link active">TODOS</a>
+          <a href="#" data-filter="Hombre" class="nav-link">HOMBRE</a>
+          <a href="#" data-filter="Mujer" class="nav-link">MUJER</a>
+
+          <div class="nav-dropdown">
+            <a href="#" class="nav-link dropdown-trigger"> CATÁLOGO ▼ </a>
+            <div class="dropdown-content">
+              <a href="#" data-filter="Zapatillas" class="dropdown-link"
+                >Zapatillas</a
+              >
+              <a href="#" data-filter="Remeras" class="dropdown-link"
+                >Remeras</a
+              >
+              <a href="#" data-filter="Pantalones" class="dropdown-link"
+                >Pantalones</a
+              >
+              <a href="#" data-filter="Buzos / Camperas" class="dropdown-link"
+                >Buzos / Camperas</a
+              >
+              <a
+                href="#"
+                data-filter="Mochilas / Accesorios"
+                class="dropdown-link"
+                >Mochilas / Accesorios</a
+              >
+            </div>
+          </div>
+          <p class="nav-info">Auspiciado por Luike and company</p>
+        </nav>
+
+        <div class="nav-actions">
+          <div class="search-container">
+            <input
+              type="text"
+              id="search"
+              class="search-input"
+              placeholder="Buscar marca o prenda..."
+            />
+            <span class="search-icon">🔍</span>
+          </div>
+          <div class="cart-icon" id="cart-icon">
+            🛒
+            <span class="cart-badge" id="cart-count">0</span>
+          </div>
+          <button class="menu-toggle" id="menu-toggle">☰</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section con video/imagen skater -->
+    <section class="hero-section">
+      <video class="hero-video" autoplay loop muted playsinline>
+        <source
+          src="https://assets.mixkit.co/videos/preview/mixkit-skateboarder-doing-tricks-in-a-skate-park-2076-large.mp4"
+          type="video/mp4"
+        />
+      </video>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">URBAN SKATEWEAR</h1>
+        <p class="hero-subtitle">Multimarca</p>
+        <div class="hero-divider"></div>
+        <p class="hero-description">
+          Las mejores marcas de street culture y skateboarding
+        </p>
+        <button
+          class="hero-btn"
+          onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})"
+        >
+          EXPLORAR CATÁLOGO
+        </button>
+      </div>
+      <div class="scroll-indicator">
+        <span>↓</span>
+      </div>
+    </section>
+
+    <!-- Filtros y Catálogo -->
+    <main class="main-container" id="catalog">
+      <!-- Barra de filtros superior -->
+      <section class="filter-bar">
+        <div class="filter-group">
+          <label>MARCA:</label>
+          <select id="brand-filter" class="filter-select">
+            <option value="">Todas las marcas</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>TALLE:</label>
+          <select id="size-filter" class="filter-select">
+            <option value="">Todos los talles</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="38">38</option>
+            <option value="39">39</option>
+            <option value="40">40</option>
+            <option value="41">41</option>
+            <option value="42">42</option>
+            <option value="43">43</option>
+            <option value="44">44</option>
+            <option value="45">45</option>
+          </select>
+        </div>
+        <div class="product-count">
+          <span id="product-count">0</span> productos disponibles
+        </div>
+      </section>
+
+      <!-- Grid de productos -->
+      <section class="catalog-section">
+        <div id="products" class="products-grid"></div>
+        <div id="no-results" class="no-results hidden">
+          <p>😔 No se encontraron productos con esos filtros</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer con redes sociales -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <img
+            src="./assets/images/logoShop33Blanco.png"
+            alt="Logo SHOP33"
+            class="logo-image"
+          />
+          <p>Tu tienda urbana de confianza</p>
+          <p>Auspiciado por Luike and company</p>
+          <p class="footer-slogan">SKATE · STREET · CULTURE</p>
+        </div>
+
+        <div class="footer-section">
+          <h4>NAVEGACIÓN</h4>
+          <ul class="footer-links">
+            <li><a href="./index.html">Inicio</a></li>
+            <li><a href="#catalog">Catálogo</a></li>
+            <li><a href="./login.html">Admin</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>SÍGUENOS</h4>
+          <div class="social-icons">
+            <a
+              href="https://www.instagram.com/shop33rosario/"
+              class="social-link"
+              title="Instagram"
+              target="_blank"
+              >📷 Instagram</a
+            >
+            <a href="#" class="social-link" title="YouTube">▶️ YouTube</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 SHOP33. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+    <!-- Modal de producto -->
+    <div id="product-modal" class="product-modal hidden">
+      <div class="modal-backdrop" id="modal-backdrop"></div>
+      <div class="modal-container">
+        <button class="modal-close" id="modal-close">✕</button>
+        <div id="modal-body" class="modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Modal del Carrito -->
+    <div id="cart-modal" class="cart-modal hidden">
+      <div class="cart-backdrop" id="cart-backdrop"></div>
+      <div class="cart-container">
+        <div class="cart-header">
+          <h2>🛒 MI CARRITO</h2>
+          <button class="cart-close" id="cart-close">✕</button>
+        </div>
+
+        <div class="cart-body" id="cart-body">
+          <p class="cart-empty">Tu carrito está vacío</p>
+        </div>
+
+        <div class="cart-footer">
+          <div class="cart-total">
+            <span>TOTAL:</span>
+            <span id="cart-total">$0</span>
+          </div>
+          <button class="cart-checkout-btn" id="cart-checkout-btn">
+            📱 ENVIAR PEDIDO POR WHATSAPP
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón flotante de WhatsApp -->
+    <a
+      href="https://wa.me/5493417214862?text=Hola!%20Quiero%20consultar%20sobre%20productos"
+      class="whatsapp-float"
+      target="_blank"
+      title="Contactar por WhatsApp"
+    >
+      <svg viewBox="0 0 32 32" class="whatsapp-icon">
+        <path
+          fill="currentColor"
+          d="M16 0c-8.837 0-16 7.163-16 16 0 2.825 0.737 5.607 2.137 8.048l-2.137 7.952 7.933-2.127c2.42 1.37 5.173 2.127 8.067 2.127 8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 29.467c-2.482 0-4.908-0.646-7.07-1.87l-0.507-0.292-4.713 1.262 1.262-4.669-0.292-0.508c-1.207-2.100-1.847-4.507-1.847-6.978 0-7.51 6.11-13.621 13.621-13.621s13.621 6.11 13.621 13.621c0 7.51-6.11 13.621-13.621 13.621zM21.305 18.461c-0.292-0.146-1.723-0.851-1.989-0.948s-0.461-0.146-0.656 0.146c-0.195 0.292-0.754 0.948-0.924 1.143s-0.34 0.219-0.632 0.073c-0.292-0.146-1.232-0.454-2.346-1.448-0.867-0.774-1.453-1.729-1.623-2.021s-0.018-0.45 0.128-0.595c0.131-0.131 0.292-0.34 0.438-0.51s0.195-0.292 0.292-0.487c0.097-0.195 0.049-0.365-0.024-0.51s-0.656-1.582-0.899-2.167c-0.236-0.569-0.476-0.492-0.656-0.501-0.17-0.008-0.365-0.010-0.56-0.010s-0.51 0.073-0.778 0.365c-0.267 0.292-1.022 0.999-1.022 2.437s1.046 2.828 1.192 3.023c0.146 0.195 2.058 3.14 4.983 4.403 0.695 0.3 1.239 0.479 1.663 0.614 0.699 0.219 1.335 0.188 1.837 0.114 0.561-0.083 1.723-0.704 1.965-1.384s0.243-1.262 0.17-1.384c-0.073-0.122-0.268-0.195-0.56-0.34z"
+        ></path>
+      </svg>
+    </a>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "name": "shop33-skate-store",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SHOP33 - Skate-style multibrand clothing e-commerce with Node.js backend",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "server": "node server/server.js",
+    "hash-password": "node -e \"const pw = process.argv[1]; console.log('Hash:', require('crypto').createHash('sha256').update(pw).digest('hex'))\"",
+    "setup": "npm install && echo 'Setup complete! Run: npm start'"
+  },
+  "keywords": [
+    "ecommerce",
+    "shop",
+    "skateboard",
+    "express",
+    "nodejs"
+  ],
+  "author": "SHOP33",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
