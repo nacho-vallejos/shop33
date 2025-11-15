@@ -39,10 +39,11 @@ if ! command -v lftp >/dev/null 2>&1; then
   exit 1
 fi
 
-# Construir flags de exclusión para lftp mirror
+# Construir flags de exclusión para lftp mirror (sin comillas literales)
 EXC=""
 for p in "${EXCLUDES[@]}"; do
-  EXC+=" --exclude-glob \"$p\""
+  # Evitar expansión de globs por el shell usando array y posterior expansión
+  EXC+=" --exclude-glob ${p}"
 done
 
 # Mostrar resumen
@@ -75,7 +76,9 @@ set cmd:fail-exit true
 mkdir -p "$REMOTE_DIR"
 cd "$REMOTE_DIR"
 # Subida recursiva (mirror reverse) con reintentos, reanudación y paralelo
-mirror -R --continue --only-newer --parallel=$PARALLEL --verbose=1 $EXC "$LOCAL_DIR" .
+# Importante: no usar comillas literales en rutas locales dentro de lftp,
+# ya que lftp las toma como parte del nombre (p.ej. "./" -> "/ruta/"." ).
+mirror -R --continue --only-newer --parallel=$PARALLEL --verbose=1 $EXC $LOCAL_DIR .
 bye
 EOF
 )
