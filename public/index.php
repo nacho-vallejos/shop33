@@ -27,9 +27,37 @@ if ($uri === '/login.php' || $uri === '/login') {
     exit;
 }
 
+// Admin logout
+if ($uri === '/admin/logout') {
+    require_once __DIR__ . '/../middlewares/AuthGuard.php';
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        logout_user();
+        header('Location: /login');
+    } else {
+        header('Location: /admin');
+    }
+    exit;
+}
+
 // Admin panel
 if ($uri === '/admin' || $uri === '/admin/') {
-    include __DIR__ . '/../views/admin/index.php';
+    include __DIR__ . '/../views/admin/panel.php';
+    exit;
+}
+
+// Admin product create
+if ($uri === '/admin/product/create' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../controllers/ProductsController.php';
+    ProductsController\create($_POST, $_FILES);
+    exit;
+}
+
+// Admin product delete
+if (preg_match('#^/admin/product/([^/]+)$#', $uri, $matches) && $_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    require_once __DIR__ . '/../middlewares/AuthGuard.php';
+    require_auth();
+    require_once __DIR__ . '/../controllers/ProductsController.php';
+    ProductsController\delete($matches[1]);
     exit;
 }
 

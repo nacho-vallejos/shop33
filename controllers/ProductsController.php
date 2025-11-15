@@ -79,10 +79,19 @@ function get_one($id) {
 }
 
 function create($post, $files) {
+    // Verificar CSRF
+    $csrf = $post['csrf_token'] ?? '';
+    if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $csrf)) {
+        \log_msg('WARN', 'CSRF validation failed on product create');
+        http_response_code(400);
+        echo json_encode(['error' => 'Token CSRF inválido'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    
     $name = $post['name'] ?? '';
     if (empty($name)) {
         http_response_code(400);
-        echo json_encode(['ok' => false, 'error' => 'name_required'], JSON_UNESCAPED_UNICODE);
+        echo json_encode(['error' => 'name_required'], JSON_UNESCAPED_UNICODE);
         exit;
     }
     
@@ -104,19 +113,20 @@ function create($post, $files) {
             $name_orig = is_array($file_list['name']) ? $file_list['name'][$i] : $file_list['name'];
             $error = is_array($file_list['error']) ? $file_list['error'][$i] : $file_list['error'];
             
-            if ($error === UPLOAD_ERR_OK) {
+            if ($error === UPLOAD_ERR_OK && !empty($name_orig)) {
                 $ext = strtolower(pathinfo($name_orig, PATHINFO_EXTENSION));
                 if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
                     $new_name = time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
                     if (move_uploaded_file($tmp, $uploads_dir . '/' . $new_name)) {
                         $images[] = '/uploads/' . $new_name;
+                        \log_msg('INFO', "Image uploaded: $new_name");
                     }
                 }
             }
         }
     }
     
-    $sizes = isset($post['sizes']) ? array_map('trim', explode(',', $post['sizes'])) : [];
+    $sizes = isset($post['sizes']) ? array_filter(array_map('trim', explode(',', $post['sizes']))) : [];
     
     $product = [
         'id' => $id,
@@ -135,11 +145,11 @@ function create($post, $files) {
     $products[] = $product;
     
     if (save_products($products)) {
-        \log_msg('INFO', "Product created: $name ($id)");
-        echo json_encode(['ok' => true, 'product' => $product], JSON_UNESCAPED_UNICODE);
+        \log_msg('INFO', "Product created: $name ($id) by " . ($_SESSION['user_id'] ?? 'unknown'));
+        echo json_encode(['success' => true, 'product' => $product], JSON_UNESCAPED_UNICODE);
     } else {
         http_response_code(500);
-        echo json_encode(['ok' => false, 'error' => 'save_failed'], JSON_UNESCAPED_UNICODE);
+        echo json_encode(['error' => 'save_failed'], JSON_UNESCAPED_UNICODE);
     }
     exit;
 }
@@ -177,21 +187,43 @@ function update($id, $post) {
 
 function delete($id) {
     $products = load_products();
+    
+    // Buscar producto para eliminar sus imágenes
+    $product_to_delete = null;
+    foreach ($products as $p) {
+        if ($p['id'] === $id) {
+            $product_to_delete = $p;
+            break;
+        }
+    }
+    
+    // Filtrar productos
     $filtered = array_filter($products, function($p) use ($id) {
         return $p['id'] !== $id;
     });
     
     if (count($filtered) < count($products)) {
+        // Eliminar imágenes físicas
+        if ($product_to_delete && !empty($product_to_delete['images'])) {
+            foreach ($product_to_delete['images'] as $img_path) {
+                $file = BASE_PATH . $img_path;
+                if (file_exists($file)) {
+                    @unlink($file);
+                    \log_msg('INFO', "Image deleted: $img_path");
+                }
+            }
+        }
+        
         if (save_products(array_values($filtered))) {
             \log_msg('INFO', "Product deleted: $id");
-            echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['success' => true], JSON_UNESCAPED_UNICODE);
         } else {
             http_response_code(500);
-            echo json_encode(['ok' => false, 'error' => 'save_failed'], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['error' => 'save_failed'], JSON_UNESCAPED_UNICODE);
         }
     } else {
         http_response_code(404);
-        echo json_encode(['ok' => false, 'error' => 'not_found'], JSON_UNESCAPED_UNICODE);
+        echo json_encode(['error' => 'not_found'], JSON_UNESCAPED_UNICODE);
     }
     exit;
 }
