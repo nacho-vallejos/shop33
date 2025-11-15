@@ -25,18 +25,25 @@ DRY_RUN=${DRY_RUN:-0}
 
 # Patrones a excluir del deploy
 EXCLUDES=(
-  ".git"
-  ".gitignore"
-  ".vscode"
-  ".idea"
+  # Metadatos y control de versiones
+  ".git" ".gitignore" ".gitattributes"
+  ".vscode" ".idea"
+  ".DS_Store" "Thumbs.db"
+  
+  # Entornos locales / caches
+  ".venv" "*/.venv"
+  "node_modules" "*/node_modules"
+  
+  # Logs y artefactos locales
   "*.log"
-  "shop33.zip"
+  "deploy_*.zip" "shop33.zip"
 )
 
 # Excluir artefactos de Node/Dev en modo php (hosting Donweb típico)
 if [[ "$MODE" == "php" ]]; then
   EXCLUDES+=(
     "node_modules"
+    "*/node_modules"
     "server"
     "start.sh"
     "start-server.sh"
