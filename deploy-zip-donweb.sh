@@ -16,6 +16,8 @@ AUTO_YES=${AUTO_YES:-0}
 TS=$(date +%Y%m%d-%H%M%S)
 ZIP_NAME=${ZIP_NAME:-"shop33-${TS}.zip"}
 LOCAL_DIR=${LOCAL_DIR:-"."}
+# Si el usuario provee un ZIP existente, lo usamos directamente
+ZIP_PATH=${ZIP_PATH:-""}
 
 # Excludes para ZIP
 ZIP_EXCLUDES=(
@@ -56,9 +58,18 @@ for p in "${ZIP_EXCLUDES[@]}"; do
   ZIP_X_PARAMS+=( -x "$p" )
 done
 
-# Crear ZIP
-( cd "$LOCAL_DIR" && zip -r "../$ZIP_NAME" . "${ZIP_X_PARAMS[@]}" >/dev/null )
-echo "✓ ZIP creado: $ZIP_NAME"
+if [[ -n "$ZIP_PATH" ]]; then
+  # Usar ZIP existente
+  if [[ ! -f "$ZIP_PATH" ]]; then
+    echo "[ERROR] ZIP_PATH no existe: $ZIP_PATH"; exit 1;
+  fi
+  ZIP_NAME=$(basename "$ZIP_PATH")
+else
+  # Crear ZIP a partir del LOCAL_DIR
+  ( cd "$LOCAL_DIR" && zip -r "../$ZIP_NAME" . "${ZIP_X_PARAMS[@]}" >/dev/null )
+  ZIP_PATH="$(pwd)/$ZIP_NAME"
+  echo "✓ ZIP creado: $ZIP_NAME"
+fi
 
 # Subir ZIP y extractor
 LFTP_CMD=$(cat <<EOF
@@ -71,7 +82,7 @@ set net:timeout 25
 set cmd:fail-exit true
 mkdir -p "$REMOTE_DIR"
 cd "$REMOTE_DIR"
-put -O . "$ZIP_NAME"
+put -O . "$ZIP_PATH" -o "$ZIP_NAME"
 put -O . "scripts/extract.php" -o "extract.php"
 bye
 EOF
