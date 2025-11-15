@@ -16,17 +16,34 @@ REMOTE_DIR=${REMOTE_DIR:-"public_html"}
 LOCAL_DIR=${LOCAL_DIR:-"."}
 # Paralelismo de subida
 PARALLEL=${PARALLEL:-4}
+# Modo de despliegue: php (recomendado para Donweb), o all
+MODE=${MODE:-"php"}
+# Eliminar archivos en el remoto que no existan localmente (0/1)
+DELETE_REMOTE=${DELETE_REMOTE:-0}
+# Ensayo sin subir (0/1)
+DRY_RUN=${DRY_RUN:-0}
 
 # Patrones a excluir del deploy
 EXCLUDES=(
   ".git"
   ".gitignore"
-  "node_modules"
   ".vscode"
   ".idea"
   "*.log"
   "shop33.zip"
 )
+
+# Excluir artefactos de Node/Dev en modo php (hosting Donweb típico)
+if [[ "$MODE" == "php" ]]; then
+  EXCLUDES+=(
+    "node_modules"
+    "server"
+    "start.sh"
+    "start-server.sh"
+    "package.json"
+    "package-lock.json"
+  )
+fi
 
 # ==============================
 # Comprobaciones
@@ -55,6 +72,9 @@ echo "  Remoto:     $REMOTE_DIR"
 # No mostramos la contraseña por seguridad
 echo "  Local:      $LOCAL_DIR"
 echo "  Paralelo:   $PARALLEL"
+echo "  Modo:       $MODE"
+echo "  Delete:     $DELETE_REMOTE"
+echo "  Dry-run:    $DRY_RUN"
 echo "════════════════════════════════════════════════════════════════"
 
 # Confirmación (omitible con AUTO_YES=1)
@@ -70,6 +90,8 @@ fi
 LFTP_CMD=$(cat <<EOF
 set ftp:ssl-allow true
 set ssl:verify-certificate no
+set ftp:passive-mode on
+set ftp:prefer-epsv false
 set net:max-retries 2
 set net:timeout 25
 set cmd:fail-exit true
@@ -78,7 +100,11 @@ cd "$REMOTE_DIR"
 # Subida recursiva (mirror reverse) con reintentos, reanudación y paralelo
 # Importante: no usar comillas literales en rutas locales dentro de lftp,
 # ya que lftp las toma como parte del nombre (p.ej. "./" -> "/ruta/"." ).
-mirror -R --continue --only-newer --parallel=$PARALLEL --verbose=1 $EXC $LOCAL_DIR .
+mirror -R --continue --only-newer --parallel=$PARALLEL --verbose=1 \\
+  $EXC \\
+  $( [[ "$DELETE_REMOTE" == "1" ]] && echo "--delete" ) \\
+  $( [[ "$DRY_RUN" == "1" ]] && echo "--dry-run" ) \\
+  $LOCAL_DIR .
 bye
 EOF
 )
