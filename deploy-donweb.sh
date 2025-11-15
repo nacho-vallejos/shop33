@@ -86,7 +86,16 @@ if [[ "${AUTO_YES:-0}" != "1" ]]; then
   fi
 fi
 
-# Comando de lftp a ejecutar
+# Construir flags de mirror dinámicos en bash para evitar barras invertidas
+MIRROR_FLAGS="--continue --only-newer --parallel=$PARALLEL --verbose=1"
+if [[ "$DELETE_REMOTE" == "1" ]]; then
+  MIRROR_FLAGS+=" --delete"
+fi
+if [[ "$DRY_RUN" == "1" ]]; then
+  MIRROR_FLAGS+=" --dry-run"
+fi
+
+# Comando de lftp a ejecutar (línea simple, sin continuaciones con \\\ )
 LFTP_CMD=$(cat <<EOF
 set ftp:ssl-allow true
 set ssl:verify-certificate no
@@ -100,11 +109,7 @@ cd "$REMOTE_DIR"
 # Subida recursiva (mirror reverse) con reintentos, reanudación y paralelo
 # Importante: no usar comillas literales en rutas locales dentro de lftp,
 # ya que lftp las toma como parte del nombre (p.ej. "./" -> "/ruta/"." ).
-mirror -R --continue --only-newer --parallel=$PARALLEL --verbose=1 \\
-  $EXC \\
-  $( [[ "$DELETE_REMOTE" == "1" ]] && echo "--delete" ) \\
-  $( [[ "$DRY_RUN" == "1" ]] && echo "--dry-run" ) \\
-  $LOCAL_DIR .
+mirror -R $MIRROR_FLAGS $EXC $LOCAL_DIR .
 bye
 EOF
 )
