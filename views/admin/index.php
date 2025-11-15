@@ -184,7 +184,16 @@
         // Cargar dashboard
         async function loadDashboard() {
             try {
-                const res = await fetch('/api/admin/dashboard');
+                const token = localStorage.getItem('admin_token');
+                if (!token) {
+                    window.location.href = '/login';
+                    return;
+                }
+                const res = await fetch('/api/admin/dashboard', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 if (!res.ok) throw new Error('Failed to load dashboard');
                 const data = await res.json();
                 

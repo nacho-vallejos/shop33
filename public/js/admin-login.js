@@ -20,7 +20,8 @@ loginForm.addEventListener("submit", async (e) => {
   hideError();
 
   try {
-    const apiUrl = new URL("./api/admin/login", window.location.href);
+    // Usar ruta absoluta para evitar problemas de basePath en hosting
+    const apiUrl = new URL("/api/admin/login", window.location.origin);
     const res = await fetch(apiUrl, {
       method: "POST",
       headers: {
