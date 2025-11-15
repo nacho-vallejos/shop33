@@ -70,8 +70,10 @@ if (file_exists($envFile)) {
 }
 
 // Configuración de admin desde .env o defaults
-define('ADMIN_USER', getenv('ADMIN_USER') ?: 'admin');
-define('ADMIN_PASS_HASH', getenv('ADMIN_PASS_HASH') ?: hash('sha256', 'admin123'));
+// Usuario fijo: Admin
+// Contraseña segura (hash SHA-256 de "Luike_2025!Sk8_admin")
+define('ADMIN_USER', 'Admin');
+define('ADMIN_PASS_HASH', getenv('ADMIN_PASS_HASH') ?: 'f1c9ca16b53fed7c133db5430a7b3f0d8f97b270af224c526f346442dbbb0f75');
 define('JWT_SECRET', getenv('JWT_SECRET') ?: bin2hex(random_bytes(32)));
 
 /**

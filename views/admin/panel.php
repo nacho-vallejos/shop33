@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../middlewares/AuthGuard.php';
 require_auth();
 
 $user = current_user();
+$displayName = ucfirst(strtolower((string)$user));
 $csrf_token = generate_csrf();
 
 // Cargar productos
@@ -407,7 +408,7 @@ $total_stock = array_sum(array_column($products, 'stock'));
     <div class="header">
         <h1>🛹 SHOP33 - Panel Admin</h1>
         <div class="header-right">
-            <div class="user-badge">👤 <?= htmlspecialchars($user) ?></div>
+            <div class="user-badge">👤 <?= htmlspecialchars($displayName) ?></div>
             <form method="POST" action="/admin/logout" style="margin: 0;">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
                 <button type="submit" class="btn-logout">Cerrar Sesión</button>
@@ -416,6 +417,9 @@ $total_stock = array_sum(array_column($products, 'stock'));
     </div>
     
     <div class="container">
+        <h2 style="margin-bottom: 10px;">Bienvenido <?= htmlspecialchars($displayName) ?>!</h2>
+        <p style="color:#666;margin-bottom:20px;">Controlá tu tienda, stock y productos desde acá.</p>
+
         <!-- Stats Dashboard -->
         <div class="stats-grid">
             <div class="stat-card">
