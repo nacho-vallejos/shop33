@@ -49,10 +49,30 @@ function bad($msg, $code = 400) {
     exit;
 }
 
+function get_bearer_user() {
+    // Soporte para Authorization: Bearer <token_base64_json>
+    $hdr = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['Authorization'] ?? '';
+    if (!$hdr) return null;
+    if (!preg_match('/^Bearer\s+(.*)$/i', $hdr, $m)) return null;
+    $tok = trim($m[1]);
+    $json = base64_decode($tok, true);
+    if ($json === false) return null;
+    $data = json_decode($json, true);
+    if (!is_array($data) || empty($data['user'])) return null;
+    return $data['user'];
+}
+
 function require_auth_api() {
-    if (empty($_SESSION['user_id'])) {
-        bad('auth_required', 401);
+    // Si hay sesión PHP válida, OK
+    if (!empty($_SESSION['user_id'])) return;
+    // Si viene Bearer token válido (de nuestro login PHP compatible), aceptar
+    $user = get_bearer_user();
+    if ($user) {
+        // Establecer mínimamente el usuario en contexto para controllers que lo muestran
+        $_SESSION['user'] = $_SESSION['user'] ?? $user;
+        return;
     }
+    bad('auth_required', 401);
 }
 
 // Cargar controllers
@@ -69,16 +89,16 @@ try {
         exit;
     }
     
-    // AUTH ENDPOINTS - Compatible con Node.js
-    if (($path === '/admin/login' || $path === '/admin/login/') && $method === 'POST') {
+    // AUTH ENDPOINTS (compatibles con Node.js y legacy)
+    if ((in_array($path, ['/admin/login','/admin/login/','/auth/login','/auth/login/'])) && $method === 'POST') {
         AuthController\login(json_input());
     }
     
-    if (($path === '/admin/logout' || $path === '/admin/logout/') && $method === 'POST') {
+    if ((in_array($path, ['/admin/logout','/admin/logout/','/auth/logout','/auth/logout/'])) && $method === 'POST') {
         AuthController\logout();
     }
     
-    if (($path === '/admin/me' || $path === '/admin/me/') && $method === 'GET') {
+    if ((in_array($path, ['/admin/me','/admin/me/','/auth/me','/auth/me/'])) && $method === 'GET') {
         AuthController\me();
     }
     
@@ -98,11 +118,12 @@ try {
         ProductsController\create($_POST, $_FILES);
     }
     
+    // DELETE/PUT con método nativo
     if (preg_match('#^/admin/product/([^/]+)/?$#', $path, $m) && $method === 'DELETE') {
         require_auth_api();
         ProductsController\delete($m[1]);
     }
-    
+
     if (preg_match('#^/admin/product/([^/]+)/?$#', $path, $m) && $method === 'POST') {
         require_auth_api();
         $action = $_POST['_method'] ?? 'POST';

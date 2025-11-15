@@ -21,7 +21,7 @@ function users_store() {
 }
 
 function login(array $in) {
-    // Acepta tanto 'user'/'pass' (legacy) como 'username'/'password' (Node.js compatible)
+    // Aceptar tanto user/pass (legacy) como username/password (frontend moderno)
     $u = trim($in['username'] ?? $in['user'] ?? '');
     $p = (string)($in['password'] ?? $in['pass'] ?? '');
     
@@ -57,7 +57,7 @@ function login(array $in) {
     $_SESSION['csrf']    = bin2hex(random_bytes(16));
     $_SESSION['login_time'] = time();
     
-    // Generar un token simple (compatible con Node.js response)
+    // Generar token base64 JSON (simple, no-JWT) para compatibilidad con frontend
     $token = base64_encode(json_encode([
         'user' => $row['user'],
         'role' => $row['role'],
@@ -67,7 +67,6 @@ function login(array $in) {
     
     \log_msg('INFO', "User logged in: $u");
     
-    // Respuesta compatible con Node.js
     echo json_encode([
         'token' => $token,
         'user' => $row['user'],
@@ -89,18 +88,35 @@ function logout() {
 }
 
 function me() {
-    if (empty($_SESSION['user_id'])) {
-        http_response_code(401);
-        echo json_encode(['error' => 'auth_required'], JSON_UNESCAPED_UNICODE);
+    // Primero, si hay sesión
+    if (!empty($_SESSION['user_id'])) {
+        echo json_encode([
+            'user' => [
+                'user' => $_SESSION['user'] ?? null,
+                'role' => $_SESSION['role'] ?? null
+            ]
+        ], JSON_UNESCAPED_UNICODE);
         exit;
     }
-    
-    // Respuesta compatible con Node.js
-    echo json_encode([
-        'user' => [
-            'user' => $_SESSION['user'] ?? null,
-            'role' => $_SESSION['role'] ?? null
-        ]
-    ], JSON_UNESCAPED_UNICODE);
+    // Segundo, intentar Authorization: Bearer <base64 json>
+    $hdr = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['Authorization'] ?? '';
+    if ($hdr && preg_match('/^Bearer\s+(.*)$/i', $hdr, $m)) {
+        $tok = trim($m[1]);
+        $json = base64_decode($tok, true);
+        if ($json !== false) {
+            $data = json_decode($json, true);
+            if (is_array($data) && !empty($data['user'])) {
+                echo json_encode([
+                    'user' => [
+                        'user' => $data['user'],
+                        'role' => $data['role'] ?? null
+                    ]
+                ], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+        }
+    }
+    http_response_code(401);
+    echo json_encode(['error' => 'auth_required'], JSON_UNESCAPED_UNICODE);
     exit;
 }
