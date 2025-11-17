@@ -209,7 +209,7 @@ app.post("/api/admin/login", (req, res) => {
       return res.status(400).json({ error: "Username and password required" });
     }
 
-    if (username !== ADMIN_USER) {
+    if (username.toLowerCase() !== ADMIN_USER.toLowerCase()) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
